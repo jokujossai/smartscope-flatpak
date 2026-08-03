@@ -42,3 +42,15 @@ os.rename("opt/smartscope", "smartscope")
 shutil.rmtree("opt")
 shutil.rmtree("usr", ignore_errors=True)
 os.remove(DEB)
+
+# On Ubuntu the .deb never depended on SDL2, so OpenTK always used its native
+# X11/GLX backend. The freedesktop runtime ships libSDL2, which makes OpenTK
+# auto-select its SDL2 backend instead — an untested path where the window
+# renders black after a resize. Break the dllmap so the SDL2 probe fails and
+# OpenTK falls back to the native X11 backend.
+cfg = "smartscope/OpenTK.dll.config"
+with open(cfg) as f:
+    content = f.read()
+with open(cfg, "w") as f:
+    f.write(content.replace('target="libSDL2-2.0.so.0"',
+                            'target="libSDL2-disabled.so.0"'))
