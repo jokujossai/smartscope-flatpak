@@ -55,6 +55,10 @@ modules:
         url: https://github.com/mono/libgdiplus.git
         tag: "6.1"
         commit: 44b44f92836f035e12b27c718e1f7bd42e369e28
+      # The bundled googletest suite no longer configures under CMake >= 4
+      - type: shell
+        commands:
+          - sed -i 's/^SUBDIRS = src tests$/SUBDIRS = src/' Makefile.am
 
   - name: smartscope
     buildsystem: simple
