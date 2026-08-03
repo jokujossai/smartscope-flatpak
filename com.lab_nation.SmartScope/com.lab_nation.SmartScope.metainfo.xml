@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.lab_nation.SmartScope</id>
+  <name>SmartScope</name>
+  <summary>Oscilloscope, logic analyzer and waveform generator</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <developer id="com.lab-nation">
+    <name>LabNation</name>
+  </developer>
+  <description>
+    <p>
+      SmartScope is the companion application for the LabNation SmartScope, a
+      USB-connected 100MS/s oscilloscope, logic analyzer and arbitrary waveform
+      generator. It offers touch-friendly waveform navigation, protocol
+      decoders, measurements and data export, and can also connect to a
+      SmartScope shared over the network by the bundled SmartScope Server.
+    </p>
+    <p>
+      This is an unofficial flatpak packaging of the last Linux release
+      (0.15.1.0) published by LabNation. The proprietary application itself is
+      downloaded from lab-nation.com during installation.
+    </p>
+  </description>
+  <launchable type="desktop-id">com.lab_nation.SmartScope.desktop</launchable>
+  <url type="homepage">https://www.lab-nation.com/</url>
+  <categories>
+    <category>Science</category>
+    <category>Electronics</category>
+  </categories>
+  <releases>
+    <release version="0.15.1.0" date="2017-06-11"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

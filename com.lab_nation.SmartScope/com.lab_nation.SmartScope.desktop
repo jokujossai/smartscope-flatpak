@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=SmartScope
+GenericName=Oscilloscope
+Comment=100MS/s USB oscilloscope, logic analyzer and waveform generator
+Exec=smartscope
+Icon=com.lab_nation.SmartScope
+Terminal=false
+Type=Application
+Categories=Science;Electronics;Engineering;
+Keywords=oscilloscope;logic;analyzer;waveform;generator;labnation;
+StartupWMClass=SmartScope

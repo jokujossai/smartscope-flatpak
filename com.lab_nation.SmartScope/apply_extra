@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Unpack the SmartScope .deb (extra-data) into /app/extra at install time.
+
+Runs inside the flatpak extra-data sandbox with the app's runtime mounted at
+/usr and the downloaded file in the current directory (/app/extra). The
+runtime has no `ar`, so the outer ar archive is parsed by hand.
+"""
+import io
+import os
+import shutil
+import tarfile
+
+DEB = "SmartScope-Linux-0-15-1-0.deb"
+
+
+def ar_member(path, prefix):
+    with open(path, "rb") as f:
+        if f.read(8) != b"!<arch>\n":
+            raise SystemExit(f"{path}: not an ar archive")
+        while True:
+            header = f.read(60)
+            if len(header) < 60:
+                break
+            name = header[0:16].decode("ascii").strip()
+            size = int(header[48:58].decode("ascii").strip())
+            data = f.read(size)
+            if size % 2:
+                f.read(1)  # 2-byte alignment padding
+            if name.startswith(prefix):
+                return data
+    raise SystemExit(f"{path}: no ar member matching {prefix}*")
+
+
+data = ar_member(DEB, "data.tar")
+with tarfile.open(fileobj=io.BytesIO(data)) as tar:
+    try:
+        tar.extractall(".", filter="data")
+    except TypeError:  # python < 3.12 has no filter=
+        tar.extractall(".")
+
+os.rename("opt/smartscope", "smartscope")
+shutil.rmtree("opt")
+shutil.rmtree("usr", ignore_errors=True)
+os.remove(DEB)

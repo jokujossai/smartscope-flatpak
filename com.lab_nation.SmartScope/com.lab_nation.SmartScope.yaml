@@ -1,0 +1,97 @@
+app-id: com.lab_nation.SmartScope
+runtime: org.freedesktop.Platform
+runtime-version: "25.08"
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.mono6
+command: smartscope
+tags:
+  - proprietary
+separate-locales: false
+finish-args:
+  - --share=ipc
+  # OpenTK 1.x drives SDL2 in X11 mode only
+  - --socket=x11
+  - --device=dri
+  # Raw USB access to the SmartScope hardware via libusb; flatpak has no
+  # finer-grained portal for userspace USB drivers
+  - --device=all
+  # MonoGame audio output (OpenAL)
+  - --socket=pulseaudio
+  # SmartScope server mode + connecting to a network-attached SmartScope
+  - --share=network
+  # Zeroconf discovery of SmartScope servers (Mono.Zeroconf AvahiDBus provider)
+  - --system-talk-name=org.freedesktop.Avahi
+  # Waveform recordings and exports are written to ~/SmartScope
+  - --filesystem=~/SmartScope:create
+  - --env=LD_LIBRARY_PATH=/app/lib
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /share/man
+  - /share/gtk-doc
+  - '*.la'
+  - '*.a'
+modules:
+  # Bundle the Mono runtime from the SDK extension into /app
+  - name: mono
+    buildsystem: simple
+    build-commands:
+      - cp -r /usr/lib/sdk/mono6/* /app/
+    cleanup:
+      - /use.sh
+      - /manifest.json
+
+  # libGLU is not part of the freedesktop runtime (OpenTK maps glu32.dll to it)
+  - shared-modules/glu/glu-9.json
+
+  # Native backend for Mono's System.Drawing; not shipped in the mono6 extension
+  - name: libgdiplus
+    buildsystem: autotools
+    config-opts:
+      - --disable-static
+    sources:
+      - type: git
+        url: https://github.com/mono/libgdiplus.git
+        tag: "6.1"
+        commit: 44b44f92836f035e12b27c718e1f7bd42e369e28
+
+  - name: smartscope
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 apply_extra /app/bin/apply_extra
+      - install -Dm755 smartscope.sh /app/bin/smartscope
+      - install -Dm755 smartscopeserver.sh /app/bin/smartscopeserver
+      - install -Dm755 smartscopeserverui.sh /app/bin/smartscopeserverui
+      - install -Dm644 ${FLATPAK_ID}.desktop -t /app/share/applications
+      - install -Dm644 ${FLATPAK_ID}.Server.desktop -t /app/share/applications
+      - install -Dm644 ${FLATPAK_ID}.metainfo.xml -t /app/share/metainfo
+      - install -Dm644 ${FLATPAK_ID}.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+      - install -Dm644 ${FLATPAK_ID}.Server.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.Server.png
+      - mkdir -p /app/extra
+    sources:
+      # The proprietary payload is downloaded from LabNation at install time
+      # (extra-data), so the published flatpak repo does not redistribute it.
+      - type: extra-data
+        filename: SmartScope-Linux-0-15-1-0.deb
+        url: https://www.lab-nation.com/SmartScope-Linux-0-15-1-0.deb
+        sha256: 267abe50af1156c33e23f0ceb3dde3ca40ed0211b7a47bd6e23150c9ec67b3ca
+        size: 10720070
+      - type: file
+        path: apply_extra
+      - type: file
+        path: smartscope.sh
+      - type: file
+        path: smartscopeserver.sh
+      - type: file
+        path: smartscopeserverui.sh
+      - type: file
+        path: com.lab_nation.SmartScope.desktop
+      - type: file
+        path: com.lab_nation.SmartScope.Server.desktop
+      - type: file
+        path: com.lab_nation.SmartScope.metainfo.xml
+      - type: file
+        path: com.lab_nation.SmartScope.png
+      - type: file
+        path: com.lab_nation.SmartScope.Server.png

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=SmartScope Server
+Comment=Share a USB-connected SmartScope over the network
+Exec=smartscopeserverui
+Icon=com.lab_nation.SmartScope.Server
+Terminal=false
+Type=Application
+Categories=Science;Electronics;Network;
+Keywords=oscilloscope;labnation;server;
+StartupWMClass=SmartScopeServerUI
