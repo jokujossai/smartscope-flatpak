@@ -25,6 +25,9 @@ finish-args:
   # Waveform recordings and exports are written to ~/SmartScope
   - --filesystem=~/SmartScope:create
   - --env=LD_LIBRARY_PATH=/app/lib
+  # Mesa's glthread deadlocks the app's 2014-era multithreaded Xlib/GLX code
+  # (black window after resize, close events never processed)
+  - --env=mesa_glthread=false
 cleanup:
   - /include
   - /lib/pkgconfig

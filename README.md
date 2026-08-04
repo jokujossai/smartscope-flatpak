@@ -76,3 +76,6 @@ GitHub Pages must be set to deploy from **GitHub Actions**.
   the freedesktop 25.08 runtime.
 - Recordings/exports are written to `~/SmartScope` (pre-granted via
   `--filesystem=~/SmartScope:create`).
+- `mesa_glthread=false` is exported because Mesa's GL command marshalling
+  thread deadlocks the app's old multithreaded Xlib/GLX rendering loop
+  (black window after resize, window close never processed).
